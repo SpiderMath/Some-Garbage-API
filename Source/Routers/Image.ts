@@ -1,10 +1,16 @@
 import { Router } from "express";
-import { loadImage, createCanvas } from "canvas";
+import { loadImage, createCanvas, registerFont } from "canvas";
 import { join } from "path";
 import { read } from "jimp";
 
 const ImageRouter = Router();
 
+// Registration of Fonts
+registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
+	family: "Coffin Stone",
+});
+
+// All routes belong here
 ImageRouter.get("/rainbow", async (req, res) => {
 	const imageURL = req.query.image;
 
@@ -447,6 +453,7 @@ ImageRouter.get("/wide-image", async (req, res) => {
 	}
 
 	let image;
+
 	try {
 		// @ts-ignore
 		image = await loadImage(imageURL);
@@ -470,5 +477,73 @@ ImageRouter.get("/wide-image", async (req, res) => {
 		.set({ "Content-Type": "image/png" })
 		.send(canvas.toBuffer());
 });
+
+ImageRouter.get("/rip", async (req, res) => {
+	const imageURL = req.query.image;
+	const username = req.query.username;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	if(!username) {
+		return res
+			.status(400)
+			.json({
+				error: "Username not provided",
+			});
+	}
+
+	let image;
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load the image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/rip.png"));
+
+	const canvas = createCanvas(base.width, base.height);
+	const ctx = canvas.getContext("2d");
+
+	// First base
+	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
+
+	// Then input image
+	ctx.drawImage(image, 194, 399, 500, 500);
+
+	// Basic Font Configuration
+	ctx.textBaseline = "top";
+	ctx.textAlign = "center";
+	ctx.font = "62px Coffin Stone";
+
+	// Writing Username
+	ctx.fillStyle = "black";
+	// @ts-ignore
+	ctx.fillText(username, 438, 330, 500);
+
+	// Writing 'in loving memory of' and the cause(optional)
+	ctx.fillStyle = "white";
+
+	if(req.query.cause) ctx.fillText(String(req.query.cause), 438, 910, 500);
+
+	ctx.font = "37px Coffin Stone";
+	ctx.fillText("In Loving Memory of", 438, 292);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer())
+});;
 
 export default ImageRouter;
