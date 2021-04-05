@@ -207,4 +207,80 @@ ImageRouter.get("/pixelate", async (req, res) => {
 	}
 });
 
+ImageRouter.get("/gun", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let img;
+
+	try {
+		// @ts-ignore
+		img = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load this image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/gun.png"));
+	const canvas = createCanvas(img.width, img.height);
+	const ctx = canvas.getContext("2d");
+
+	ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	const ratio = (img.height / 2) / base.height;
+
+	const width = base.width * ratio;
+
+	ctx.drawImage(base, img.width - width, img.height - (img.height / 2), width, img.height / 2);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer());
+});
+
+ImageRouter.get("/png-to-jpeg", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(200)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	try {
+		// @ts-ignore
+		const image = await loadImage(imageURL);
+
+		const canvas = createCanvas(image.width, image.height);
+		const ctx = canvas.getContext("2d");
+
+		ctx.drawImage(image, 0, 0, image.width, image.height);
+
+		res
+			.status(200)
+			.set({ "Content-Type": "image/jpeg" })
+			.send(canvas.toBuffer("image/jpeg"));
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load this image",
+			});
+	}
+});
+
 export default ImageRouter;
