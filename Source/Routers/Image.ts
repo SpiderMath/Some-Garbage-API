@@ -498,6 +498,23 @@ ImageRouter.get("/rip", async (req, res) => {
 			});
 	}
 
+	// @ts-ignore
+	if(req.query.cause && req.query.cause.length > 47) {
+		return res
+			.status(400)
+			.json({
+				error: "Cause length cannot be more than 47",
+			});
+	}
+	// @ts-ignore
+	if(username.length > 20) {
+		return res
+			.status(400)
+			.json({
+				error: "Username length cannot be more than 20",
+			});
+	}
+
 	let image;
 	try {
 		// @ts-ignore
@@ -543,7 +560,7 @@ ImageRouter.get("/rip", async (req, res) => {
 	res
 		.status(200)
 		.set({ "Content-Type": "image/png" })
-		.send(canvas.toBuffer())
-});;
+		.send(canvas.toBuffer());
+});
 
 export default ImageRouter;
