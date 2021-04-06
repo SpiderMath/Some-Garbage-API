@@ -5,6 +5,9 @@ import { read } from "jimp";
 
 const ImageRouter = Router();
 
+// Importing helpers
+import drawImageWithTint from "../Helpers/Canvas/drawImageWithTint";
+
 // Registration of Fonts
 registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
 	family: "Coffin Stone",
@@ -556,6 +559,50 @@ ImageRouter.get("/rip", async (req, res) => {
 
 	ctx.font = "37px Coffin Stone";
 	ctx.fillText("In Loving Memory of", 438, 292);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer());
+});
+
+ImageRouter.get("/he-lives-in-you", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let image;
+
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load Image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/he-lives-in-you.png"));
+
+	const canvas = createCanvas(base.width, base.height);
+	const ctx = canvas.getContext("2d");
+
+	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
+
+	ctx.rotate(-24 * (Math.PI / 180));
+
+	drawImageWithTint(ctx, image, "#00115d", 75, 160, 130, 150);
+
+	ctx.rotate(24 * (Math.PI / 180));
 
 	res
 		.status(200)
