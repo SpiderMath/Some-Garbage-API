@@ -294,6 +294,19 @@ ImageRouter.get("/png-to-jpeg", async (req, res) => {
 
 ImageRouter.get("/chocolate-milk", async (req, res) => {
 	const imageURL = req.query.image;
+	let direction = String(req.query.direction);
+
+	const directions = ["left", "right"];
+
+	if(direction === undefined) direction = "left";
+
+	if(!directions.includes(direction.toLowerCase())) {
+		return res
+			.status(400)
+			.json({
+				error: "Invalid direction provided. The valid options are: right & left",
+			});
+	}
 
 	if(!imageURL) {
 		return res
@@ -306,7 +319,7 @@ ImageRouter.get("/chocolate-milk", async (req, res) => {
 	try {
 		// @ts-ignore
 		const image = await loadImage(imageURL);
-		const base = await loadImage(join(__dirname, "../../Assets/Images/chocolate-milk.png"));
+		const base = await loadImage(join(__dirname, `../../Assets/Images/chocolate-milk-${direction.toLowerCase()}.png`));
 
 		const canvas = createCanvas(base.width, base.height);
 		const ctx = canvas.getContext("2d");
