@@ -7,6 +7,7 @@ const ImageRouter = Router();
 
 // Importing helpers
 import drawImageWithTint from "../Helpers/Canvas/drawImageWithTint";
+import greyscale from "../Helpers/Canvas/greyscale";
 
 // Registration of Fonts
 registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
@@ -554,6 +555,9 @@ ImageRouter.get("/rip", async (req, res) => {
 
 	// Then input image
 	ctx.drawImage(image, 194, 399, 500, 500);
+
+	// Then greyscale the image provided
+	greyscale(ctx, 194, 399, 500, 500);
 
 	// Basic Font Configuration
 	ctx.textBaseline = "top";
