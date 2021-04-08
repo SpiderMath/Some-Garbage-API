@@ -651,6 +651,19 @@ ImageRouter.get("/kyon-gun", async (req, res) => {
 
 ImageRouter.get("/sip", async (req, res) => {
 	const imageURL = req.query.image;
+	let direction = String(req.query.direction);
+
+	const directions = ["left", "right"];
+
+	if(direction === undefined) direction = "left";
+
+	if(!directions.includes(direction.toLowerCase())) {
+		return res
+			.status(400)
+			.json({
+				error: "Invalid direction provided. The valid options are: right & left",
+			});
+	}
 
 	if(!imageURL) {
 		return res
@@ -674,7 +687,7 @@ ImageRouter.get("/sip", async (req, res) => {
 			});
 	}
 
-	const base = await loadImage(join(__dirname, "../../Assets/Images/sip.png"));
+	const base = await loadImage(join(__dirname, `../../Assets/Images/sip-${direction.toLowerCase()}.png`));
 
 	const canvas = createCanvas(base.width, base.height);
 	const ctx = canvas.getContext("2d");
