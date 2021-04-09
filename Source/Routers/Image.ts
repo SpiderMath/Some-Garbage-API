@@ -10,6 +10,7 @@ import drawImageWithTint from "../Helpers/Canvas/drawImageWithTint";
 import greyscale from "../Helpers/Canvas/greyscale";
 import desaturate from "../Helpers/Canvas/desaturate";
 import contrast from "../Helpers/Canvas/contrast";
+import centerImagePart from "../Helpers/Canvas/centerImagePart";
 
 // Registration of Fonts
 registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
@@ -888,7 +889,7 @@ ImageRouter.get("/beautiful", async (req, res) => {
 		.send(canvas.toBuffer());
 });
 
-ImageRouter.get("/girl-worth-fighting-for", async (req, res) => {
+ImageRouter.get("/mulan-ling", async (req, res) => {
 	const imageURL = req.query.image;
 
 	if(!imageURL) {
@@ -919,6 +920,14 @@ ImageRouter.get("/girl-worth-fighting-for", async (req, res) => {
 	const ctx = canvas.getContext("2d");
 
 	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
+	const { x, y, width, height } = centerImagePart(image, 150, 150, 380, 511);
+
+	ctx.drawImage(image, x, y, width, height);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer());
 });
 
 export default ImageRouter;
