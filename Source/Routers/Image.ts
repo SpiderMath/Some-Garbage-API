@@ -765,4 +765,44 @@ ImageRouter.get("/i-have-the-power", async (req, res) => {
 		.send(canvas.toBuffer());
 });
 
+ImageRouter.get("/hearts", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let image;
+
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load Image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/hearts.png"));
+
+	const canvas = createCanvas(image.width, image.height);
+	const ctx = canvas.getContext("2d");
+
+	drawImageWithTint(ctx, image, "deeppink", 0, 0, canvas.width, canvas.height);
+
+	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
+
+	res
+		.status(400)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer());
+});
+
 export default ImageRouter;
