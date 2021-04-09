@@ -8,6 +8,8 @@ const ImageRouter = Router();
 // Importing helpers
 import drawImageWithTint from "../Helpers/Canvas/drawImageWithTint";
 import greyscale from "../Helpers/Canvas/greyscale";
+import desaturate from "../Helpers/Canvas/desaturate";
+import contrast from "../Helpers/Canvas/contrast";
 
 // Registration of Fonts
 registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
@@ -803,6 +805,45 @@ ImageRouter.get("/hearts", async (req, res) => {
 		.status(400)
 		.set({ "Content-Type": "image/png" })
 		.send(canvas.toBuffer());
+});
+
+ImageRouter.get("/deepfry", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let image;
+
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load Image",
+			});
+	}
+
+	const canvas = createCanvas(image.width, image.height);
+	const ctx = canvas.getContext("2d");
+
+	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+	desaturate(ctx, -20, 0, 0, canvas.width, canvas.height);
+	contrast(ctx, 0, 0, canvas.width, canvas.height);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/jpeg" })
+		.send(canvas.toBuffer("image/jpeg", { quality: 0.2 }));
 });
 
 export default ImageRouter;
