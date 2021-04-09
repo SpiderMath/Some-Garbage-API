@@ -4,7 +4,7 @@ config();
 import Logger from "./Helpers/Logger";
 import Authenticate from "./Middlewares/Authenticate";
 // @ts-ignore
-import ImageRouter from "./Routers/Image";
+import ImageRouter from "./Routers/Image/ImageRouter";
 
 const port = Number(process.env.PORT) || 3000;
 
