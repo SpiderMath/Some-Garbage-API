@@ -383,7 +383,6 @@ ImageRouter.get("/brightness", async (req, res) => {
 		image = await read(imageURL);
 	}
 	catch(err) {
-		console.log(err.message);
 		return res
 			.status(400)
 			.json({
@@ -478,7 +477,6 @@ ImageRouter.get("/wide-image", async (req, res) => {
 		image = await loadImage(imageURL);
 	}
 	catch(err) {
-		console.log(err.message);
 		return res
 			.status(400)
 			.json({
@@ -844,6 +842,83 @@ ImageRouter.get("/deepfry", async (req, res) => {
 		.status(200)
 		.set({ "Content-Type": "image/jpeg" })
 		.send(canvas.toBuffer("image/jpeg", { quality: 0.2 }));
+});
+
+ImageRouter.get("/beautiful", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let image;
+
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load Image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/beautiful.png"));
+
+	const canvas = createCanvas(base.width, base.height);
+	const ctx = canvas.getContext("2d");
+
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, base.width, base.height);
+
+	ctx.drawImage(base, 0, 0);
+
+	ctx.drawImage(image, 249, 24, 105, 105);
+	ctx.drawImage(image, 249, 223, 105, 105);
+
+	res
+		.status(200)
+		.set({ "Content-Type": "image/png" })
+		.send(canvas.toBuffer());
+});
+
+ImageRouter.get("/girl-worth-fighting-for", async (req, res) => {
+	const imageURL = req.query.image;
+
+	if(!imageURL) {
+		return res
+			.status(400)
+			.json({
+				error: "Image URL not provided",
+			});
+	}
+
+	let image;
+
+	try {
+		// @ts-ignore
+		image = await loadImage(imageURL);
+	}
+	catch(err) {
+		return res
+			.status(400)
+			.json({
+				error: "Failed to load Image",
+			});
+	}
+
+	const base = await loadImage(join(__dirname, "../../Assets/Images/girl-worth-fighting-for.png"));
+
+	const canvas = createCanvas(base.width, base.height);
+	const ctx = canvas.getContext("2d");
+
+	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
 });
 
 export default ImageRouter;
