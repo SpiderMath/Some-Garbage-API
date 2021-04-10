@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { readdirSync } from "fs";
 import { join } from "path";
-import RouterExport from "../../Constants/RouterExport";
+import RouterExport from "../../Constants/RouteExport";
 import Logger from "../../Helpers/Logger";
 
 const ImageRouter = Router();

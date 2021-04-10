@@ -5,10 +5,9 @@ interface RouterRun {
 	(req: Request, res: Response): Promise<any>
 }
 
-export default interface RouterExport {
+export default interface RouteExport {
 	name: string
 	description: string
-	parameters: string[]
 	run: RouterRun
 // eslint-disable-next-line semi
 }
