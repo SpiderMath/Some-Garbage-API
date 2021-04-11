@@ -60,7 +60,7 @@ const RIPRoute: RouteExport = {
 				});
 		}
 
-		const base = await loadImage(join(__dirname, "../../Assets/Images/rip.png"));
+		const base = await loadImage(join(__dirname, "../../../../Assets/Images/rip.png"));
 
 		const canvas = createCanvas(base.width, base.height);
 		const ctx = canvas.getContext("2d");
