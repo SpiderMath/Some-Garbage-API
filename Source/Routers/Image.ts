@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { loadImage, createCanvas, registerFont } from "canvas";
 import { join } from "path";
-import { read } from "jimp";
 
 const ImageRouter = Router();
 
@@ -20,101 +19,6 @@ registerFont(join(__dirname, "../../Assets/Fonts/CoffinStone.otf"), {
 // legend: left 70, right 228, top 50, bottom 210
 
 // All routes belong here
-ImageRouter.get("/fusion", async (req, res) => {
-	const baseURL = req.query.base;
-	const overlayURL = req.query.overlay;
-
-	if(!baseURL) {
-		return res
-			.status(400)
-			.json({
-				error: "Base URL not provided",
-			});
-	}
-
-	if(!overlayURL) {
-		return res
-			.status(400)
-			.json({
-				error: "Overlay URL not provided",
-			});
-	}
-
-	let base, overlay;
-
-	try {
-		// @ts-ignore
-		base = await loadImage(baseURL);
-		// @ts-ignore
-		overlay = await loadImage(overlayURL);
-	}
-	catch(err) {
-		return res
-			.status(400)
-			.json({
-				error: "Images could not be loaded",
-			});
-	}
-
-	const canvas = createCanvas(base.width, base.height);
-	const ctx = canvas.getContext("2d");
-
-	ctx.globalAlpha = 0.5;
-
-	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
-
-	ctx.drawImage(overlay, 0, 0, canvas.width, canvas.height);
-
-	res
-		.status(200)
-		.set({ "Content-Type": "image/png" })
-		.send(canvas.toBuffer());
-});
-
-ImageRouter.get("/wide-image", async (req, res) => {
-	const imageURL = req.query.image;
-	const ratio = Number(req.query.ratio) || 2;
-
-	if(!imageURL) {
-		return res
-			.status(400)
-			.json({
-				error: "Image URL not provided",
-			});
-	}
-
-	if(ratio > 10 || ratio <= 0.01) {
-		return res
-			.status(400)
-			.json({
-				error: "RANGE_ERROR. Range exceeded, ratio has to be between 0.01 and 10",
-			});
-	}
-
-	let image;
-
-	try {
-		// @ts-ignore
-		image = await loadImage(imageURL);
-	}
-	catch(err) {
-		return res
-			.status(400)
-			.json({
-				error: "Failed to load the image",
-			});
-	}
-
-	const canvas = createCanvas(image.width * ratio, image.height);
-	const ctx = canvas.getContext("2d");
-
-	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-	res
-		.status(200)
-		.set({ "Content-Type": "image/png" })
-		.send(canvas.toBuffer());
-});
 
 ImageRouter.get("/rip", async (req, res) => {
 	const imageURL = req.query.image;
