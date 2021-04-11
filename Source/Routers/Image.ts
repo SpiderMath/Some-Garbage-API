@@ -5,7 +5,6 @@ import { join } from "path";
 const ImageRouter = Router();
 
 // Importing helpers
-import drawImageWithTint from "../Helpers/Canvas/drawImageWithTint";
 import desaturate from "../Helpers/Canvas/desaturate";
 import contrast from "../Helpers/Canvas/contrast";
 import centerImagePart from "../Helpers/Canvas/centerImagePart";
@@ -13,46 +12,6 @@ import centerImagePart from "../Helpers/Canvas/centerImagePart";
 // legend: left 70, right 228, top 50, bottom 210
 
 // All routes belong here
-ImageRouter.get("/hearts", async (req, res) => {
-	const imageURL = req.query.image;
-
-	if(!imageURL) {
-		return res
-			.status(400)
-			.json({
-				error: "Image URL not provided",
-			});
-	}
-
-	let image;
-
-	try {
-		// @ts-ignore
-		image = await loadImage(imageURL);
-	}
-	catch(err) {
-		return res
-			.status(400)
-			.json({
-				error: "Failed to load Image",
-			});
-	}
-
-	const base = await loadImage(join(__dirname, "../../Assets/Images/hearts.png"));
-
-	const canvas = createCanvas(image.width, image.height);
-	const ctx = canvas.getContext("2d");
-
-	drawImageWithTint(ctx, image, "deeppink", 0, 0, canvas.width, canvas.height);
-
-	ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
-
-	res
-		.status(400)
-		.set({ "Content-Type": "image/png" })
-		.send(canvas.toBuffer());
-});
-
 ImageRouter.get("/deepfry", async (req, res) => {
 	const imageURL = req.query.image;
 
