@@ -19,3 +19,5 @@ readdirSync(join(__dirname, "Routes"))
 	});
 
 export default ImageRouter;
+
+// legend: left 70, right 228, top 50, bottom 210
