@@ -10,50 +10,6 @@ import centerImagePart from "../Helpers/Canvas/centerImagePart";
 // legend: left 70, right 228, top 50, bottom 210
 
 // All routes belong here
-ImageRouter.get("/beautiful", async (req, res) => {
-	const imageURL = req.query.image;
-
-	if(!imageURL) {
-		return res
-			.status(400)
-			.json({
-				error: "Image URL not provided",
-			});
-	}
-
-	let image;
-
-	try {
-		// @ts-ignore
-		image = await loadImage(imageURL);
-	}
-	catch(err) {
-		return res
-			.status(400)
-			.json({
-				error: "Failed to load Image",
-			});
-	}
-
-	const base = await loadImage(join(__dirname, "../../Assets/Images/beautiful.png"));
-
-	const canvas = createCanvas(base.width, base.height);
-	const ctx = canvas.getContext("2d");
-
-	ctx.fillStyle = "white";
-	ctx.fillRect(0, 0, base.width, base.height);
-
-	ctx.drawImage(base, 0, 0);
-
-	ctx.drawImage(image, 249, 24, 105, 105);
-	ctx.drawImage(image, 249, 223, 105, 105);
-
-	res
-		.status(200)
-		.set({ "Content-Type": "image/png" })
-		.send(canvas.toBuffer());
-});
-
 ImageRouter.get("/mulan-ling", async (req, res) => {
 	const imageURL = req.query.image;
 
